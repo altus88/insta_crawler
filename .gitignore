@@ -1,0 +1,23 @@
+# Add any directories, files, or patterns you don't want to be tracked by version control
+#maven
+target/
+bin/
+
+#gradle
+build/
+out/
+.gradle/
+
+#eclipse
+.settings
+.project
+.classpath
+.directory
+#intellij
+.idea/
+*.iml
+
+#other
+logfile
+*.log
+
