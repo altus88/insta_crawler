@@ -1,3 +1,5 @@
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -42,11 +44,12 @@ public class Main
         Set<String> previousItemsUrls = new HashSet<>();
         Map<String, Integer> hashTagPopularity = new HashMap<>();
         int loop = 0;
-        long start = System.currentTimeMillis();
+        long begin = 0;
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("#" + tagName + ".txt")))
         {
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 10; i++)
             {
+                long start = System.currentTimeMillis();
                  //jse.executeScript("scroll(0," + scrollDistance + ");");
                 List<WebElement> postElements = driver.findElements(By.cssSelector("div.v1Nh3.kIKUG._bz0w"));
                 System.out.print(++loop + " ");
@@ -77,13 +80,13 @@ public class Main
                         }
                     }
                 }
-                System.out.println("*");
-                System.out.println("Unique posts: "  + previousItemsUrls.size());
+                long elapsed = System.currentTimeMillis() - start;
+                System.out.println(" Unique posts: "  + previousItemsUrls.size() + ". Time elapsed: " + elapsed);
   //              scrollDistance += 2000;
             }
         }
-        long elapsed = System.currentTimeMillis() - start;
-        System.out.println(elapsed);
+
+        System.out.println("Overall time elapsed: " + (System.currentTimeMillis() - begin));
         // put hash tags in sorted order by likes
         writeInSortedOrderHashTags("#"+ tagName + "_stat.txt", hashTagPopularity);
         driver.close();
