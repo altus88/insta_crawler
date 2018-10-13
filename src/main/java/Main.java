@@ -44,7 +44,7 @@ public class Main
         Set<String> previousItemsUrls = new HashSet<>();
         Map<String, Integer> hashTagPopularity = new HashMap<>();
         int loop = 0;
-        long begin = 0;
+        long begin = System.currentTimeMillis();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("#" + tagName + ".txt")))
         {
             for (int i = 0; i < 10; i++)
@@ -61,8 +61,9 @@ public class Main
                     if (!previousItemsUrls.contains(linkToPost)) // check if we parsed already this post
                     {
                         previousItemsUrls.add(linkToPost);
-                        builder.moveToElement(postElement).build().perform(); // mouse hover on the element to see number of likes
-                        Thread.sleep(1000);
+                        builder.moveToElement(postElement).perform(); // mouse hover on the element to see number of likes
+                       // ((JavascriptExecutor)driver).executeScript("arguments[0].click();", postElement);
+                        //Thread.sleep(1000);
                         Integer numberOfLikes = getNumberOfLikes(postElement);
                         if (numberOfLikes >= 500)
                         {
