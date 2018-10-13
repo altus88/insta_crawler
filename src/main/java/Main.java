@@ -39,6 +39,7 @@ public class Main
         options.addArguments("--headless");
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://www.instagram.com/explore/tags/" + tagName + "/");
+        Thread.sleep(1000);
         Actions builder = new Actions(driver);
 
         Set<String> previousItemsUrls = new HashSet<>();
@@ -62,8 +63,10 @@ public class Main
                     {
                         previousItemsUrls.add(linkToPost);
                         builder.moveToElement(postElement).perform(); // mouse hover on the element to see number of likes
-                       // ((JavascriptExecutor)driver).executeScript("arguments[0].click();", postElement);
-                        //Thread.sleep(1000);
+//                        String javaScript = "var evObj = document.createEvent('MouseEvents');" +
+//                                "evObj.initMouseEvent(\"mouseover\",true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);" +
+//                                "arguments[0].dispatchEvent(evObj);";
+
                         Integer numberOfLikes = getNumberOfLikes(postElement);
                         if (numberOfLikes >= 500)
                         {
