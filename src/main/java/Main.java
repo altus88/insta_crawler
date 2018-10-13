@@ -62,7 +62,7 @@ public class Main
                     {
                         previousItemsUrls.add(linkToPost);
                         builder.moveToElement(postElement).build().perform(); // mouse hover on the element to see number of likes
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                         Integer numberOfLikes = getNumberOfLikes(postElement);
                         if (numberOfLikes >= 500)
                         {
