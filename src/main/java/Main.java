@@ -67,21 +67,21 @@ public class Main
 //                                "evObj.initMouseEvent(\"mouseover\",true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);" +
 //                                "arguments[0].dispatchEvent(evObj);";
 
-                        Integer numberOfLikes = getNumberOfLikes(postElement);
-                        if (numberOfLikes >= 500)
+//                        Integer numberOfLikes = getNumberOfLikes(postElement);
+//                        if (numberOfLikes >= 500)
+//                        {
+                        WebElement postDescriptionElement = linkToPostElement.findElement(By.cssSelector("div.KL4Bh img"));
+                        String postDescription = postDescriptionElement.getAttribute("alt");
+                        List<String> hashTagsFromPost = extractHashTags(postDescription);
+                        for (String hashTag : hashTagsFromPost)
                         {
-                            WebElement postDescriptionElement = linkToPostElement.findElement(By.cssSelector("div.KL4Bh img"));
-                            String postDescription = postDescriptionElement.getAttribute("alt");
-                            List<String> hashTagsFromPost = extractHashTags(postDescription);
-                            for (String hashTag : hashTagsFromPost)
-                            {
-                                hashTagPopularity.merge(hashTag, 1, (v1, v2) -> v1 + v2);
-                            }
-                            hashTagsFromPost.add(linkToPost);
-                            hashTagsFromPost.add(numberOfLikes.toString()); // add count likes at the end
-                            writer.write(String.join(",", hashTagsFromPost));
-                            writer.write("\n");
+                            hashTagPopularity.merge(hashTag, 1, (v1, v2) -> v1 + v2);
                         }
+                        hashTagsFromPost.add(linkToPost);
+                        //hashTagsFromPost.add(numberOfLikes.toString()); // add count likes at the end
+                        writer.write(String.join(",", hashTagsFromPost));
+                        writer.write("\n");
+//                        }
                     }
                 }
                 long elapsed = System.currentTimeMillis() - start;
