@@ -49,7 +49,7 @@ public class Main
         long begin = System.currentTimeMillis();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("#" + tagName + ".txt")))
         {
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100000; i++)
             {
                 long start = System.currentTimeMillis();
                  //jse.executeScript("scroll(0," + scrollDistance + ");");
