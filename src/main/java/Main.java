@@ -8,6 +8,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.SourceType;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -57,13 +58,15 @@ public class Main
                 System.out.print(++loop + " ");
                 for (WebElement postElement : postElements)
                 {
-                    System.out.print("*");
-                    WebElement linkToPostElement = postElement.findElement(By.tagName("a"));
-                    String linkToPost = linkToPostElement.getAttribute("href");
-                    if (!previousItemsUrls.contains(linkToPost)) // check if we parsed already this post
+                    try
                     {
-                        previousItemsUrls.add(linkToPost);
-                        builder.moveToElement(postElement).perform(); // mouse hover on the element to see number of likes
+                        System.out.print("*");
+                        WebElement linkToPostElement = postElement.findElement(By.tagName("a"));
+                        String linkToPost = linkToPostElement.getAttribute("href");
+                        if (!previousItemsUrls.contains(linkToPost)) // check if we parsed already this post
+                        {
+                            previousItemsUrls.add(linkToPost);
+                            builder.moveToElement(postElement).perform(); // mouse hover on the element to see number of likes
 //                        String javaScript = "var evObj = document.createEvent('MouseEvents');" +
 //                                "evObj.initMouseEvent(\"mouseover\",true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);" +
 //                                "arguments[0].dispatchEvent(evObj);";
@@ -71,18 +74,24 @@ public class Main
 //                        Integer numberOfLikes = getNumberOfLikes(postElement);
 //                        if (numberOfLikes >= 500)
 //                        {
-                        WebElement postDescriptionElement = linkToPostElement.findElement(By.cssSelector("div.KL4Bh img"));
-                        String postDescription = postDescriptionElement.getAttribute("alt");
-                        List<String> hashTagsFromPost = extractHashTags(postDescription);
-                        for (String hashTag : hashTagsFromPost)
-                        {
-                            hashTagPopularity.merge(hashTag, 1, (v1, v2) -> v1 + v2);
-                        }
-                        hashTagsFromPost.add(linkToPost);
-                        //hashTagsFromPost.add(numberOfLikes.toString()); // add count likes at the end
-                        writer.write(String.join(",", hashTagsFromPost));
-                        writer.write("\n");
+                            WebElement postDescriptionElement = linkToPostElement.findElement(By.cssSelector("div.KL4Bh img"));
+                            String postDescription = postDescriptionElement.getAttribute("alt");
+                            List<String> hashTagsFromPost = extractHashTags(postDescription);
+                            for (String hashTag : hashTagsFromPost)
+                            {
+                                hashTagPopularity.merge(hashTag, 1, (v1, v2) -> v1 + v2);
+                            }
+                            hashTagsFromPost.add(linkToPost);
+                            //hashTagsFromPost.add(numberOfLikes.toString()); // add count likes at the end
+                            writer.write(String.join(",", hashTagsFromPost));
+                            writer.write("\n");
 //                        }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.out.println("Sleep in case of exception : " + ex.getMessage());
+                        Thread.sleep(5000);
                     }
                 }
                 Thread.sleep(2000);
