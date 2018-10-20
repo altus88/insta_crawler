@@ -53,7 +53,7 @@ public class Main
         long begin = System.currentTimeMillis();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("#" + tagName + ".txt")))
         {
-            for (int i = 0; i < 10000; i++)
+            for (int i = 1; i <= 100000; i++)
             {
                 long start = System.currentTimeMillis();
                  //jse.executeScript("scroll(0," + scrollDistance + ");");
@@ -97,6 +97,12 @@ public class Main
                         Thread.sleep(5000);
                     }
                 }
+
+                if (i % 10000 == 0)
+                {
+                    writeInSortedOrderHashTags("#"+ tagName + "_stat.txt", hashTagPopularity);
+                }
+
                 Thread.sleep(2000);
                 long elapsed = System.currentTimeMillis() - start;
                 System.out.println(" Unique posts: "  + previousItemsUrls.size() + ". Time elapsed: " + elapsed);
