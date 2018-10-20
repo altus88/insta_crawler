@@ -1,3 +1,10 @@
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
@@ -11,6 +18,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.SourceType;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +41,13 @@ public class Main
 {
     static Pattern instaHashTagPattern = Pattern.compile("#[^# ]+");
 
+    static String awsAccessKey = "AKIAJESO4JSOQ34R46GA";
+
+    static String awsSecretKey = "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";
+
+    static String awsS3Bucket = "altus88";
+
+
     public static void main(String[] args) throws InterruptedException, IOException
     {
         String tagName = args[0];
@@ -51,9 +66,10 @@ public class Main
         Map<String, Integer> hashTagPopularity = new HashMap<>();
         int loop = 0;
         long begin = System.currentTimeMillis();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("#" + tagName + ".txt")))
+        String postsTagsFileName = "#" + tagName + ".txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(postsTagsFileName)))
         {
-            for (int i = 1; i <= 100000; i++)
+            for (int i = 1; i <= 1000; i++)
             {
                 long start = System.currentTimeMillis();
                  //jse.executeScript("scroll(0," + scrollDistance + ");");
@@ -98,10 +114,10 @@ public class Main
                     }
                 }
 
-                if (i % 10000 == 0)
-                {
-                    writeInSortedOrderHashTags("#"+ tagName + "_stat.txt", hashTagPopularity);
-                }
+//                if (i % 1000 == 0)
+//                {
+//                    writeInSortedOrderHashTags("#"+ tagName + "_stat.txt", hashTagPopularity);
+//                }
 
                 Thread.sleep(2000);
                 long elapsed = System.currentTimeMillis() - start;
@@ -110,10 +126,30 @@ public class Main
             }
         }
 
-        System.out.println("Overall time elapsed: " + (System.currentTimeMillis() - begin));
+        System.out.println("Overall downloading time elapsed: " + (System.currentTimeMillis() - begin));
         // put hash tags in sorted order by likes
-        writeInSortedOrderHashTags("#"+ tagName + "_stat.txt", hashTagPopularity);
+        String statFileName = "#"+ tagName + "_stat.txt";
+        writeInSortedOrderHashTags(statFileName, hashTagPopularity);
+
+        System.out.println("Put data in s3...");
+        putFileInS3Bucket(new File(statFileName), statFileName);
+        putFileInS3Bucket(new File(postsTagsFileName), postsTagsFileName);
+        System.out.println("Finished");
+
         driver.close();
+    }
+
+    private static AmazonS3 getS3Client()
+    {
+        BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
+        return AmazonS3ClientBuilder.standard().withRegion("eu-central-1").withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
+    }
+
+    public static void putFileInS3Bucket(File file, String key)
+    {
+        PutObjectRequest por = new PutObjectRequest(awsS3Bucket, key, file);
+        por.setCannedAcl(CannedAccessControlList.PublicRead);
+        getS3Client().putObject(por);
     }
 
     private static Integer getNumberOfLikes(WebElement webElement) throws InterruptedException
