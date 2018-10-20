@@ -1,3 +1,5 @@
+package crawler.instargam.com;
+
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -51,6 +53,8 @@ public class Main
     public static void main(String[] args) throws InterruptedException, IOException
     {
         String tagName = args[0];
+        Boolean isProduction = args.length > 1 && args[1].equals("prod");
+
         WebDriverManager.getInstance(CHROME).setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
@@ -131,11 +135,13 @@ public class Main
         String statFileName = "#"+ tagName + "_stat.txt";
         writeInSortedOrderHashTags(statFileName, hashTagPopularity);
 
-        System.out.println("Put data in s3...");
-        putFileInS3Bucket(new File(statFileName), statFileName);
-        putFileInS3Bucket(new File(postsTagsFileName), postsTagsFileName);
-        System.out.println("Finished");
-
+        if (isProduction)
+        {
+            System.out.println("Put data in s3...");
+            putFileInS3Bucket(new File(statFileName), statFileName);
+            putFileInS3Bucket(new File(postsTagsFileName), postsTagsFileName);
+            System.out.println("Finished");
+        }
         driver.close();
     }
 

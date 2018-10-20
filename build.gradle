@@ -3,11 +3,31 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'application'
+mainClassName = 'crawler.instargam.com.Main'
+
+run {
+    if (project.hasProperty("appArgs")) {
+        args Eval.me(appArgs)
+    }
+}
 
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "crawler.instargam.com.Main"
+    }
+
+    doFirst {
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+
+    archiveName='application.jar'
 }
 
 dependencies {
@@ -20,10 +40,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-run {
-    if (project.hasProperty("appArgs")) {
-        args Eval.me(appArgs)
-    }
-}
 
-mainClassName = 'Main'
+
+
