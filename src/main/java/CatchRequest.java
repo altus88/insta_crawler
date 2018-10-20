@@ -34,7 +34,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 import static io.github.bonigarcia.wdm.DriverManagerType.CHROME;
 
-public class Test
+public class CatchRequest
 {
     static Pattern instaHashTagPattern = Pattern.compile("#[^# ]+");
 
