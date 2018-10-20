@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,8 +39,10 @@ public class Main
         WebDriverManager.getInstance(CHROME).setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
-        options.addArguments("headless");
+        options.addArguments("--incognito");
         WebDriver driver = new ChromeDriver(options);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
         driver.get("https://www.instagram.com/explore/tags/" + tagName + "/");
         Thread.sleep(1000);
         Actions builder = new Actions(driver);
@@ -50,7 +53,7 @@ public class Main
         long begin = System.currentTimeMillis();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("#" + tagName + ".txt")))
         {
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 long start = System.currentTimeMillis();
                  //jse.executeScript("scroll(0," + scrollDistance + ");");
